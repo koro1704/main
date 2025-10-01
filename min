@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Finder</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a clean look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        /* Simple transition for page visibility */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom styling for status badges */
+        .status-available {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .status-not-available {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <!-- Main Container -->
+    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
+
+        <!-- Login Page -->
+        <div id="login-page" class="page w-full max-w-4xl">
+            <div class="text-center mb-10">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-700">Faculty Finder</h1>
+                <p class="text-lg text-gray-500 mt-2">Welcome! Please select your role to proceed.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Student Login Card -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1 cursor-pointer" onclick="showPage('student-dashboard')">
+                    <div class="text-center">
+                        <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-blue-100 mb-4">
+                            <svg class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.494h18" /></svg>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-gray-800">Student Login</h2>
+                        <p class="text-gray-500 mt-2">Check professor availability and cabin locations.</p>
+                    </div>
+                </div>
+                <!-- Teacher Login Card -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1 cursor-pointer" onclick="showPage('teacher-login-page')">
+                    <div class="text-center">
+                        <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-100 mb-4">
+                             <svg class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-gray-800">Teacher Login</h2>
+                        <p class="text-gray-500 mt-2">Update your status and view colleague details.</p>
+                    </div>
+                </div>
+                <!-- Admin Login Card -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1 cursor-pointer" onclick="showPage('admin-dashboard')">
+                    <div class="text-center">
+                        <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-purple-100 mb-4">
+                            <svg class="h-10 w-10 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-gray-800">Admin Login</h2>
+                        <p class="text-gray-500 mt-2">Manage all faculty data and system settings.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teacher Login Page -->
+        <div id="teacher-login-page" class="page w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">Teacher Login</h2>
+            <form id="teacher-login-form" class="space-y-6">
+                <div>
+                    <label for="teacher-login-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="teacher-login-name" placeholder="e.g., Dr. Evelyn Reed" required class="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="teacher-login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="teacher-login-password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">Hint: The password for all users is 'password123'.</p>
+                </div>
+                <div id="teacher-login-error" class="text-red-500 text-sm text-center min-h-[1.25rem]"></div>
+                <div>
+                    <button type="submit" class="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors font-semibold">Login</button>
+                </div>
+            </form>
+             <button onclick="showPage('login-page')" class="w-full mt-4 bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors">Go Back</button>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="student-dashboard" class="page w-full max-w-5xl bg-white p-8 rounded-xl shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Faculty Directory</h2>
+                <button onclick="showPage('login-page')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">Logout</button>
+            </div>
+            <div class="mb-4">
+                <input type="text" id="student-search" onkeyup="renderStudentDashboard()" placeholder="Search by name or department..." class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div id="student-professor-list" class="space-y-4">
+                <!-- Professor data will be injected here by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Teacher Dashboard -->
+        <div id="teacher-dashboard" class="page w-full max-w-5xl bg-white p-8 rounded-xl shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800">Teacher Dashboard</h2>
+                    <p id="teacher-welcome" class="text-gray-600"></p>
+                </div>
+                <div>
+                     <button onclick="showPage('teacher-edit-profile')" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors mr-2">Edit My Profile</button>
+                    <button onclick="showPage('login-page')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">Logout</button>
+                </div>
+            </div>
+            <div id="teacher-professor-list" class="overflow-x-auto">
+                 <!-- Professor data will be injected here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Teacher Edit Profile Page -->
+        <div id="teacher-edit-profile" class="page w-full max-w-2xl bg-white p-8 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Edit Your Profile</h2>
+            <form id="edit-profile-form" class="space-y-6">
+                <div>
+                    <label for="teacher-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="teacher-name" class="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="teacher-department" class="block text-sm font-medium text-gray-700">Department</label>
+                    <input type="text" id="teacher-department" class="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="teacher-cabin" class="block text-sm font-medium text-gray-700">Cabin Number</label>
+                    <input type="text" id="teacher-cabin" class="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="teacher-status" class="block text-sm font-medium text-gray-700">Current Status</label>
+                    <select id="teacher-status" class="mt-1 block w-full p-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option>Available</option>
+                        <option>Not Available</option>
+                    </select>
+                </div>
+                <div class="flex items-center justify-end space-x-4">
+                    <button type="button" onclick="showPage('teacher-dashboard')" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors">Cancel</button>
+                    <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors">Save Changes</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="admin-dashboard" class="page w-full max-w-6xl bg-white p-8 rounded-xl shadow-lg">
+             <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Admin Control Panel</h2>
+                <button onclick="showPage('login-page')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">Logout</button>
+            </div>
+            <div id="admin-professor-list" class="overflow-x-auto">
+                <!-- Admin professor table will be injected here -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- MOCK DATABASE ---
+        // In a real application, this data would come from a server.
+        let professors = [
+            { id: 1, name: 'Dr. Evelyn Reed', department: 'Computer Science', cabin: 'A-101', status: 'Available', password: 'password123' },
+            { id: 2, name: 'Dr. Samuel Chen', department: 'Physics', cabin: 'B-205', status: 'Not Available', password: 'password123' },
+            { id: 3, name: 'Dr. Maria Garcia', department: 'Chemistry', cabin: 'C-310', status: 'Available', password: 'password123' },
+            { id: 4, name: 'Dr. Ben Carter', department: 'Mathematics', cabin: 'A-102', status: 'Available', password: 'password123' },
+            { id: 5, name: 'Dr. Aisha Khan', department: 'Computer Science', cabin: 'D-401', status: 'Not Available', password: 'password123' }
+        ];
+
+        // This variable will hold the data of the currently logged-in teacher.
+        let currentTeacher = null;
+
+        // --- PAGE NAVIGATION ---
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            // Show the requested page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.style.display = 'block';
+            }
+
+            // Based on the page being shown, render its content
+            if (pageId === 'student-dashboard') {
+                renderStudentDashboard();
+            }
+            if (pageId === 'teacher-dashboard') {
+                renderTeacherDashboard();
+            }
+            if (pageId === 'admin-dashboard') {
+                renderAdminDashboard();
+            }
+        }
+        
+        // --- LOGIN LOGIC ---
+        function handleTeacherLogin(event) {
+            event.preventDefault(); // Stop the form from submitting the traditional way
+            const nameInput = document.getElementById('teacher-login-name');
+            const passwordInput = document.getElementById('teacher-login-password');
+            const errorDiv = document.getElementById('teacher-login-error');
+
+            const name = nameInput.value;
+            const password = passwordInput.value;
+            
+            errorDiv.textContent = ''; // Clear previous errors
+
+            const teacher = professors.find(p => p.name.toLowerCase() === name.toLowerCase());
+
+            if (teacher && password === teacher.password) {
+                currentTeacher = teacher;
+                document.getElementById('teacher-welcome').textContent = `Welcome, ${currentTeacher.name}!`;
+                showPage('teacher-dashboard');
+                // Clear the form for security
+                nameInput.value = '';
+                passwordInput.value = '';
+            } else {
+                errorDiv.textContent = 'Invalid name or password. Please try again.';
+            }
+        }
+
+        // --- RENDERING FUNCTIONS ---
+
+        // Render Student View
+        function renderStudentDashboard() {
+            const list = document.getElementById('student-professor-list');
+            const searchTerm = document.getElementById('student-search').value.toLowerCase();
+            
+            const filteredProfessors = professors.filter(p => 
+                p.name.toLowerCase().includes(searchTerm) || 
+                p.department.toLowerCase().includes(searchTerm)
+            );
+
+            if (filteredProfessors.length === 0) {
+                 list.innerHTML = `<p class="text-center text-gray-500">No professors found.</p>`;
+                 return;
+            }
+
+            list.innerHTML = filteredProfessors.map(prof => `
+                <div class="grid grid-cols-3 md:grid-cols-4 gap-4 items-center bg-gray-50 p-4 rounded-lg">
+                    <div>
+                        <p class="font-bold text-lg">${prof.name}</p>
+                        <p class="text-sm text-gray-600">${prof.department}</p>
+                    </div>
+                    <div class="text-center text-gray-700 hidden md:block">${prof.cabin}</div>
+                    <div class="text-center">
+                        <span class="px-3 py-1 text-sm font-medium rounded-full ${prof.status === 'Available' ? 'status-available' : 'status-not-available'}">
+                            ${prof.status}
+                        </span>
+                    </div>
+                    <div class="text-center text-gray-700 md:hidden">${prof.cabin}</div>
+                </div>
+            `).join('');
+        }
+
+        // Render Teacher View
+        function renderTeacherDashboard() {
+            const container = document.getElementById('teacher-professor-list');
+            container.innerHTML = `
+                <table class="min-w-full bg-white">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="text-left py-3 px-4 font-semibold text-sm">Name</th>
+                            <th class="text-left py-3 px-4 font-semibold text-sm">Department</th>
+                            <th class="text-left py-3 px-4 font-semibold text-sm">Cabin</th>
+                            <th class="text-center py-3 px-4 font-semibold text-sm">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        ${professors.map(prof => `
+                            <tr class="border-b border-gray-200 hover:bg-gray-50 ${prof.id === currentTeacher.id ? 'bg-blue-50 font-bold' : ''}">
+                                <td class="py-3 px-4">${prof.name}</td>
+                                <td class="py-3 px-4">${prof.department}</td>
+                                <td class="py-3 px-4">${prof.cabin}</td>
+                                <td class="py-3 px-4 text-center">
+                                    <span class="px-3 py-1 text-sm font-medium rounded-full ${prof.status === 'Available' ? 'status-available' : 'status-not-available'}">
+                                        ${prof.status}
+                                    </span>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // Render Admin View
+        function renderAdminDashboard() {
+            const container = document.getElementById('admin-professor-list');
+            container.innerHTML = `
+                <table class="min-w-full bg-white">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="text-left py-3 px-4 font-semibold text-sm">Name</th>
+                            <th class="text-left py-3 px-4 font-semibold text-sm">Department</th>
+                            <th class="text-left py-3 px-4 font-semibold text-sm">Cabin</th>
+                            <th class="text-center py-3 px-4 font-semibold text-sm">Status</th>
+                            <th class="text-center py-3 px-4 font-semibold text-sm">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        ${professors.map(prof => `
+                            <tr class="border-b border-gray-200">
+                                <td class="py-3 px-4">${prof.name}</td>
+                                <td class="py-3 px-4">${prof.department}</td>
+                                <td class="py-3 px-4">${prof.cabin}</td>
+                                <td class="py-3 px-4 text-center">
+                                     <span class="px-3 py-1 text-sm font-medium rounded-full ${prof.status === 'Available' ? 'status-available' : 'status-not-available'}">
+                                        ${prof.status}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    <button onclick="toggleStatus(${prof.id})" class="text-sm bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors">
+                                        Toggle Status
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // --- DATA MANIPULATION ---
+
+        // Toggle status from Admin panel
+        function toggleStatus(profId) {
+            const professor = professors.find(p => p.id === profId);
+            if (professor) {
+                professor.status = professor.status === 'Available' ? 'Not Available' : 'Available';
+                renderAdminDashboard(); // Re-render the admin view to show the change
+            }
+        }
+        
+        // Load teacher data into the edit form
+        document.getElementById('teacher-edit-profile').addEventListener('focusin', () => {
+            if (currentTeacher) {
+                document.getElementById('teacher-name').value = currentTeacher.name;
+                document.getElementById('teacher-department').value = currentTeacher.department;
+                document.getElementById('teacher-cabin').value = currentTeacher.cabin;
+                document.getElementById('teacher-status').value = currentTeacher.status;
+            }
+        });
+
+        // Handle profile update
+        document.getElementById('edit-profile-form').addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent form from reloading the page
+            
+            const profIndex = professors.findIndex(p => p.id === currentTeacher.id);
+            if (profIndex !== -1) {
+                professors[profIndex].name = document.getElementById('teacher-name').value;
+                professors[profIndex].department = document.getElementById('teacher-department').value;
+                professors[profIndex].cabin = document.getElementById('teacher-cabin').value;
+                professors[profIndex].status = document.getElementById('teacher-status').value;
+                
+                // Update the currentTeacher object as well
+                currentTeacher = professors[profIndex];
+
+                alert("Profile updated successfully!");
+                showPage('teacher-dashboard');
+            }
+        });
+
+        // --- INITIALIZATION ---
+        // Show the login page when the app first loads
+        window.onload = () => {
+            showPage('login-page');
+            // Set up the teacher login form handler
+            document.getElementById('teacher-login-form').addEventListener('submit', handleTeacherLogin);
+        };
+    </script>
+
+</body>
+</html>
+
